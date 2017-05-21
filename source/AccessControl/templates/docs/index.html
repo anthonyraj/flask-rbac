@@ -1,0 +1,591 @@
+<html>
+<head>
+	<!-- Bootstrap core CSS -->
+    <link href="{{ hostname }}/static/css/bootstrap.min.css" rel="stylesheet">
+</head>
+	
+<body>
+<div class="container">
+
+<h1> Role Based Access Control</h1> <hr>
+BASE URL : {{ hostname }}
+
+<h2> Management UX Index</h2> <hr>
+<li><a href="/rbac_roles?customer_db=equipa">Role Management for Equipa</a>: rbac_roles?customer_db=equipa</li>
+<li><a href="/display_access_control?role_id=1&customer_db=equipa">Access Contol Management for Equipa for Super Admin</a>: display_access_control1?role_id=1&customer_db=equipa</li>
+
+<h2> Microservice API Index</h2> <hr>
+
+<h3> Basics </h3>
+<ul>    
+    <li><a href="/roles?customer_db=equipa">Roles</a>: roles?customer_db=equipa -> returns all roles for a customer_db filter</li>
+    <li><a href="/access_control?customer_db=equipa">Access Control</a>: access_control?customer_db=equipa -> returns acls across roles</li>
+    <li><a href="/access_control?customer_db=equipa&role_id=1">Access Control</a>: access_control?customer_db=equipa&role_id=1 ->  returns acls for a role_id </li>
+    <li><a href="/users?customer_db=equipa">Users</a>: users?customer_db=equipa -> returns all users for a customer_db filter</li>
+    <li><a href="/users?customer_db=equipa&role_id=1">Users</a>: users?customer_db=equipa&role_id=1 -> returns all users for a customer_db filter for a role_id</li>
+</ul>
+
+<h3> Permission Inventory </h3>
+Access the Permission definitions for each Module
+<ul>
+	<li><a href="/modules?customer_db=equipa">Modules</a>: modules?customer_db=equipa</li>
+	<li><a href="/permission_inventory?customer_db=equipa">Permission Inventory</a>: permission_inventory?customer_db=equipa</li>
+</ul>
+
+<h3> Access Control: </h3>
+
+<h4>get_user_permissions</h4>
+<p>Get User Permissions using the Tenant descriptor</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>login_id</td>
+		<td>The unique login_id that has been authenticated with CAS</td>
+		<td>araj@equipa.com</td>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>		
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/get_user_permissions?login_id=araj@equipa.com&customer_db=equipa">Get Permissions for User from EQUIPA</a>: get_user_permissions?login_id=araj@equipa.com&customer_db=equipa</li>
+	<li><a href="/get_user_permissions?login_id=araj@manufacto.com&customer_db=manufacto">Get Permissions for User from MANUFACTO</a>: get_user_permissions?login_id=araj@manufacto.com&customer_db=manufacto</li>
+</ul>
+
+Output:
+<ul>
+	<li> Successful permissions for login_id
+		<pre>
+{"login_id": "araj@equipa.com", "permissions": [{"acl_id": 246, "perm_id": 51, "perm_name": "DASH_LIST_VIEW", "role_id": 2}, {"acl_id": 247, "perm_id": 52, "perm_name": "DASH_VIEW_RECORDS", "role_id": 2}, {"acl_id": 248, "perm_id": 53, "perm_name": "DASH_OPEN_DOC", "role_id": 2}, {"acl_id": 249, "perm_id": 54, "perm_name": "DASH_DOWNLOAD_DOC", "role_id": 2}, {"acl_id": 250, "perm_id": 55, "perm_name": "DASH_GRAPH_VIEW", "role_id": 2}, {"acl_id": 251, "perm_id": 56, "perm_name": "DASH_REPORT_VIEW", "role_id": 2}, {"acl_id": 252, "perm_id": 101, "perm_name": "REC_LIST_VIEW", "role_id": 2}, {"acl_id": 253, "perm_id": 102, "perm_name": "REC_ADD_RECORD", "role_id": 2}, {"acl_id": 254, "perm_id": 103, "perm_name": "REC_EDIT_RECORD", "role_id": 2}, {"acl_id": 255, "perm_id": 151, "perm_name": "PROJ_LIST_VIEW", "role_id": 2}, {"acl_id": 256, "perm_id": 152, "perm_name": "PROJ_NEW_PROJECT", "role_id": 2}, {"acl_id": 257, "perm_id": 153, "perm_name": "PROJ_EDIT_PROJECT", "role_id": 2}], "role_id": 2, "role_name": "Administrator", "status": "ok"}
+		</pre>
+	</li>
+	<li> Failure to retrieve permissions for login_id
+		<pre>
+{"error": "login_id has been suspended", "login_id": "araj@equipa.com", "permissions": []}
+		</pre>
+	</li>
+</ul>
+<hr>
+
+<h4>get_users_granted_access</h4>
+<p>Get Users Granted Access to a Permission name</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>perm_name</td>
+		<td>The unique perm_name for which service needs to perform lookup of login_ids</td>
+		<td>AC_SUSPENDED_USER_NOTIFICATION</td>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>		
+</table>
+<hr>
+
+Output:
+<ul>
+	<li> Successful login_ids & user_ids for queried perm_name
+		<pre>
+{"data": [[1, "araj@equipa.com"], [6, "test_user@equipa.com"], [7, "test_user@equipa.com1"]], "error": ""}
+		</pre>
+	</li>
+	<li> Successful login_ids (empty list) for queried perm_name
+		<pre>
+		{"data": [], "error": ""}
+		</pre>
+	</li>
+		<li> Failure in retrieving the login_ids for set of query parameters
+		<pre>
+{"data": [], "error": "customer_db or customer_id or perm_name parameter missing"}
+		</pre>
+	</li>
+</ul>
+
+
+Examples:
+<ul>
+	<li><a href="/get_users_granted_access?perm_name=RFQ_REQUEST_FOR_QUOTE_NOTIFICATION&customer_db=emctest">Get Users Granted Access Permission Name from EMCTEST</a>: get_users_granted_access?perm_name=RFQ_REQUEST_FOR_QUOTE_NOTIFICATION&customer_db=emctest</li>
+	<li><a href="/get_users_granted_access?perm_name=AC_SUSPENDED_USER_NOTIFICATION&customer_db=equipa">Get Users Granted Access Permission Name from EQUIPA</a>: get_users_granted_access?perm_name=AC_SUSPENDED_USER_NOTIFICATION&customer_db=equipa</li>
+</ul>
+<hr>
+
+<h3> Roles: </h3>
+<h4>role_info</h4>
+<p>Get Role Info using the required parameters</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_id</td>
+		<td>describes the ID of the role</td>
+		<td>10</td>
+	</tr>			
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/role_info?customer_db=equipa&role_id=10">Get Role Info for Equipa</a>: role_info?customer_db=equipa&role_id=10</li>
+</ul>
+<hr>
+
+<h4>add_role</h4>
+<p>Add Role using the required parameters</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_name</td>
+		<td>describes the name of the role</td>
+		<td>Test_Role</td>
+	</tr>
+	<tr>
+		<td>role_description</td>
+		<td>describes the objective of the role</td>
+		<td>Test Role Description</td>
+	</tr>
+	<tr>
+		<td>output</td>
+		<td>describes the response type output=json or output=html</td>
+		<td>json/html</td>
+	</tr>			
+</table>
+<hr>
+
+Output Response: 
+<pre>
+{"role_id": 39, "status": "ok"}	
+</pre>
+<hr>
+Examples:
+<ul>
+	<li><a href="/add_role?customer_db=equipa&role_name=Test Role&role_description=Test Role Description&output=json">Add Role for Equipa with JSON Response</a>: add_role?customer_db=equipa&role_name="Test Role"&role_description="Test Role Description&output=json"</li>
+	<li><a href="/add_role?customer_db=equipa&role_name=Test Role&role_description=Test Role Description">Add Role for Equipa with UI Response</a>: add_role?customer_db=equipa&role_name="Test Role"&role_description="Test Role Description"</li>
+</ul>
+<hr>
+
+<h4>update_role</h4>
+<p>Update Role using the required parameters</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_id</td>
+		<td>describes the ID of the role</td>
+		<td>10</td>
+	</tr>
+	<tr>
+		<td>role_name</td>
+		<td>describes the Name of the role</td>
+		<td>Test Role2</td>
+	</tr>
+	<tr>
+		<td>role_description</td>
+		<td>describes the Description of the role</td>
+		<td>Test Role Description2</td>
+	</tr>			
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/update_role?customer_db=equipa&role_name=Test%20Role2&role_description=Test%20Role%20Description2&role_id=10">Update Role for Equipa</a>: update_role?customer_db=equipa&role_name=Test%20Role2&role_description=Test%20Role%20Description2&role_id=10"</li>
+</ul>
+<hr>
+
+<h4>delete_role</h4>
+<p>Delete Role using the required parameters</p>
+NOTE: Super Admin, Administrator, Compliance Manager Roles cannot be deleted.
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_id</td>
+		<td>describes the ID of the role</td>
+		<td>10</td>
+	</tr>
+	<tr>
+		<td>output</td>
+		<td>describes the response type output=json or output=html</td>
+		<td>json/html</td>
+	</tr>		
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/delete_role?customer_db=equipa&role_id=10">Delete Role for Equipa</a>: delete_role?customer_db=equipa&role_id=10"</li>
+</ul>
+<hr>
+
+<!--
+<h4>add_roles_with_access_control</h4>
+<p>Add Role using the required parameters</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_name</td>
+		<td>describes the name of the role</td>
+		<td>Test_Role</td>
+	</tr>
+	<tr>
+		<td>role_description</td>
+		<td>describes the objective of the role</td>
+		<td>Test Role Description</td>
+	</tr>
+	<tr>
+		<td>module_id</td>
+		<td>describes the module_id for which permissions are being added</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>sub_module_id</td>
+		<td>describes the sub_module_id for which permissions are being added</td>
+		<td>300</td>
+	</tr>
+	<tr>
+		<td>radio_access_type</td>
+		<td>describes the sub_module used for accessing the data</td>
+		<td>AC_ENTERPRISE_SETTTINGS_TYPE_RADIO</td>
+	</tr>
+	<tr>
+		<td>AC_ENTERPRISE_SETTTINGS_TYPE_RADIO</td>
+		<td>describes the access_type 1=no_access, 2=full_access, 3=custom_access</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>sub_module_code</td>
+		<td>describes the sub_module_code</td>
+		<td>AC_ENTERPRISE_SETTTINGS</td>
+	</tr>									
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/add_role_with_access_control?customer_db=equipa&role_name=Test Role&role_description=Test Role Description&module_id=1&sub_module_id=300&radio_access_type=AC_ENTERPRISE_SETTTINGS_TYPE_RADIO&AC_ENTERPRISE_SETTTINGS_TYPE_RADIO=2&sub_module_code=AC_ENTERPRISE_SETTTINGS">Add Role With Permissions for Equipa</a>: add_role_with_access_control?customer_db=equipa&role_name=Test Role&role_description=Test Role Description&module_id=1&sub_module_id=300&radio_access_type=AC_ENTERPRISE_SETTTINGS_TYPE_RADIO&AC_ENTERPRISE_SETTTINGS_TYPE_RADIO=2&sub_module_code=AC_ENTERPRISE_SETTTINGS</li>
+</ul>
+<hr>
+-->
+
+<h4>validate_role</h4>
+<p>Used to validate the presence of a role_name.</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>role_name</td>
+		<td>Role Name to be validated</td>
+		<td>Test Role</td>
+	</tr>
+		</table>
+<hr>
+
+Output:
+
+<ul>
+	<li> Failure to get role_id for the queried role_name
+		<pre>
+{"data": {"role_name": "Test Role"}, "error": "role_name does not exist", "status": 0}
+		</pre>
+	</li>
+	<li> Successful role_id for the queried role_name
+		<pre>
+{"data": {"role_id": 1, "role_name": "Test Role"}, "error": "no error", "status": 1}		
+		</pre>
+	</li>
+	<li> Successful role_ids with same role_name
+		<pre>
+{"data": {"role_id": [45, 46, 47], "role_name": "Test Role"}, "error": "Too many roles with the same name", "status": 1}
+		</pre>
+	</li>
+</ul>
+
+
+Examples:
+<ul>
+	<li><a href="/validate_role?customer_db=equipa&role_name=Test%20Role">Validate Role for Equipa</a>:/validate_role?customer_db=equipa&role_name=Test%20Role</li>
+</ul>
+
+<hr>
+
+<h3> Users: </h3>
+
+<h4>add_login_id_mapping</h4>
+<p>Used to map the login_id with the role_id within rbac_users table The mapping is maintained in order to provide appropriate permissions when requesting for permissions for the login_id.</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>login_id</td>
+		<td>User's login_id to be added</td>
+		<td>test_user@equipa</td>
+	</tr>
+	<tr>
+		<td>role_id</td>
+		<td>Role_id to be used for mapping the new login_id</td>
+		<td>1</td>
+	</tr>	
+	<tr>
+		<td>user_id</td>
+		<td>User's user_id to be added</td>
+		<td>10</td>
+	</tr>	
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/add_login_id_mapping?customer_db=equipa&login_id=test_user@equipa.com&role_id=1&user_id=10">Add Role for Equipa</a>: add_login_id_mapping?customer_db=equipa&login_id=test_user@equipa.com&role_id=1&user_id=10</li>
+</ul>
+<hr>
+
+<h4>update_login_id_mapping</h4>
+<p>Used to update the login_id <=> role_id mapping within rbac_users table The mapping is maintained in order to provide appropriate permissions when requesting for permissions for the login_id.</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>login_id</td>
+		<td>User's login_id to be updated</td>
+		<td>test_user@equipa</td>
+	</tr>
+	<tr>
+		<td>role_id</td>
+		<td>Role_id to be used for updating login_id mapping</td>
+		<td>1</td>
+	</tr>		
+</table>
+<hr>
+
+Examples:
+<ul>
+	<li><a href="/update_login_id_mapping?customer_db=equipa&login_id=test_user@equipa.com&role_id=3">Update Role for Equipa</a>: update_login_id_mapping?customer_db=equipa&login_id=test_user@equipa.com&role_id=3</li>
+</ul>
+<hr>
+
+<h4>validate_login</h4>
+<p>Used to validate the presence of a login_id.</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>login_id</td>
+		<td>Login Id to be validated</td>
+		<td>test_user@equipa</td>
+	</tr>
+		</table>
+<hr>
+
+Output:
+<ul>
+	<li> Failure to get Role_id for the queried login_id
+		<pre>
+{"data": {"login_id": "test_user@equipa.com1"}, "error": "login_id does not exist", "status": 0}
+		</pre>
+	</li>
+	<li> Successful Role_id for the queried login_id
+		<pre>
+{"data": {"login_id": "test_user@equipa.com", "role_id": 1, "is_suspended": 0}, "error": "no error", "status": 1}
+		</pre>
+	</li>
+</ul>
+
+Examples:
+<ul>
+	<li><a href="/validate_login?customer_db=equipa&login_id=test_user@equipa">Validate Login for Equipa</a>: /validate_login?customer_db=equipa&login_id=test_user@equipa</li>
+</ul>
+<hr>
+
+<h4>get_project_membership_users_list</h4>
+<p>Get the list of users who can be used for Contact and Membership listing</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+		</table>
+<hr>
+
+Output:
+<ul>
+	<li> Fail list of login_ids for managing project membership
+		<pre>
+{"data": [], "error": "no error"}
+		</pre>
+	</li>
+	<li> Successful list of login_ids for managing project membership
+		<pre>
+{"data": ["user1@equipa.com", "user2@equipa.com", "user3@equipa.com"], "error": "no error"}
+		</pre>
+	</li>
+</ul>
+
+Examples:
+<ul>
+	<li><a href="/get_project_membership_users_list?customer_db=equipa">Get Project Membership for Equipa</a>: /get_project_membership_users_list?customer_db=equipa</li>
+</ul>
+<hr>
+
+<h4>manage_user_status</h4>
+<p>Manage the User is_suspended Status on the RBAC side for synchronization of the user information</p>
+
+Parameters:
+<table class="table">
+	<tr>
+		<th>Parameter Name</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>customer_db</td>
+		<td>The unique customer_db of the User that has been authenticated with CAS</td>
+		<td>equipa</td>
+	</tr>
+	<tr>
+		<td>login_id</td>
+		<td>The logn_id for which the is_suspended status needs to be managed</td>
+		<td>user@equipa.com</td>
+	</tr>
+	<tr>
+		<td>is_suspended</td>
+		<td>The field that needs to be set on/off for synchronization with the CAS user status</td>
+		<td>1/0</td>
+	</tr>
+		</table>
+<hr>
+
+Output:
+<ul>
+	<li> Successful list of active login_ids once the user is_suspended status has been set/reset
+		<pre>
+{"data": [{"login_id": "user1@equipa.com", "role_description": "Administrator: Sample Privileges", "role_id": 2, "role_name": "Administrator", "user_id": 1}, {"login_id": "user2@equipa.com", "role_description": "Super Admin: Sample Privileges", "role_id": 1, "role_name": "Super Admin", "user_id": 2} ], "error": "no error"}
+		</pre>
+	</li>
+</ul>
+
+Examples:
+<ul>
+	<li><a href="/manage_user_status?customer_db=equipa&login_id=araj@equipa.com&is_suspended=0">Manage User Status for Equipa</a>: /manage_user_status?customer_db=equipa&login_id=user@equipa.com&is_suspended=0</li>
+</ul>
+<hr>
+</div>
+</body>

@@ -1,0 +1,30 @@
+########### Optimized Rules Suggestion ##################
+# total_count:81 (31.03%), peer_count:2 (100.0%) | double quote
+BasicRule wl:1001 "mz:$HEADERS_VAR:cookie";
+# total_count:80 (30.65%), peer_count:2 (100.0%) | double encoding !
+BasicRule wl:1315 "mz:$HEADERS_VAR:cookie";
+# total_count:80 (30.65%), peer_count:2 (100.0%) | http:// scheme
+BasicRule wl:1100 "mz:$HEADERS_VAR:cookie";
+# total_count:5 (1.92%), peer_count:2 (100.0%) | sql keywords
+BasicRule wl:1000 "mz:$URL:/delete_role|URL";
+# total_count:4 (1.53%), peer_count:1 (50.0%) | ; in stuff
+BasicRule wl:1008 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:2 (0.77%), peer_count:2 (100.0%) | sql keywords
+BasicRule wl:1000 "mz:$URL:/update_role|URL";
+# total_count:2 (0.77%), peer_count:1 (50.0%) | sql keywords
+BasicRule wl:1000 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | sql keywords
+BasicRule wl:1000 "mz:$URL:/update_login_id_mapping|URL";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | html close tag
+BasicRule wl:1303 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | html open tag
+BasicRule wl:1302 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | backslash
+BasicRule wl:1205 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | parenthesis, probable sql/xss
+BasicRule wl:1011 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | parenthesis, probable sql/xss
+BasicRule wl:1010 "mz:$URL:/add_role|$BODY_VAR:role_name";
+# total_count:1 (0.38%), peer_count:1 (50.0%) | html open tag
+BasicRule wl:1302 "mz:$URL:/|$ARGS_VAR:a";
+

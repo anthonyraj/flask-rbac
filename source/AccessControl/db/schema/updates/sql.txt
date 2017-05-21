@@ -1,0 +1,7 @@
+sql/update_vendors.sql
+sql/update_dashboard_permissions.sql
+sql/update_notfication_description.sql
+sql/update_project_permissions.sql
+sql/alter_rbac_users_table.sql
+sql/update_dash_rec_open_perm.sql
+sql/update_lab_profile_permissions.sql

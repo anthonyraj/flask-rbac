@@ -1,0 +1,6 @@
+equipa
+acme
+manufacto
+emctest
+safetytest
+universal
